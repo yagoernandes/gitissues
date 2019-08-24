@@ -5,61 +5,102 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image
+  Image,
+  FlatList
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import axios from 'axios'
 import * as WebBrowser from 'expo-web-browser'
 
-
 export default function IssuesScreen({
   navigation: {
     state: {
       params: { avatar, id, login, name }
-    }
+    },
+    setParams
   }
 }) {
   const [state, setState] = useState({
     filter: 'all',
-    issues: []
+    issues: [],
+    loading: true
   })
 
   useEffect(() => {
-    axios
-      .get(
-        `http://api.github.com/repos/${name}/${login}/issues?state=${state.filter}`
-      )
-      .then(response => {
-        if (response.data && response.data.id) {
-          console.log('Resposta: ', response.data)
-          // console.log('ID: ', response.data.id)
-          // console.log('Título: ', response.data.title)
-          // console.log('Usuário: ', response.data.user.login)
-          // console.log('Avatar: ', response.data.user.avatar_url)
+    setParams({ title: name })
+  }, [])
 
-          setState(s => ({ ...s, issues: response.data }))
-        }
-      })
+  useEffect(() => {
+    getIssues()
   }, [state.filter])
+
+  const getIssues = async () => {
+    setState(s => ({ ...s, loading: true }))
+    const response = await axios.get(
+      `https://api.github.com/repos/${login}/${name}/issues?state=${state.filter}`
+    )
+    setState(s => ({ ...s, loading: false, issues: response.data }))
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={()=>{setState(s=>({...s, filter:'all'}))}}>
-          <Text style={styles.topBarTextSelected}>Todas</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setState(s => ({ ...s, filter: 'all' }))
+          }}>
+          <Text
+            style={
+              state.filter === 'all'
+                ? styles.topBarTextSelected
+                : styles.topBarText
+            }>
+            Todas
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=>{setState(s=>({...s, filter:'open'}))}}>
-          <Text style={styles.topBarText}>Abertas</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setState(s => ({ ...s, filter: 'open' }))
+          }}>
+          <Text
+            style={
+              state.filter === 'open'
+                ? styles.topBarTextSelected
+                : styles.topBarText
+            }>
+            Abertas
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=>{setState(s=>({...s, filter:'closed'}))}}>
-          <Text style={styles.topBarText}>Fechadas</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setState(s => ({ ...s, filter: 'closed' }))
+          }}>
+          <Text
+            style={
+              state.filter === 'closed'
+                ? styles.topBarTextSelected
+                : styles.topBarText
+            }>
+            Fechadas
+          </Text>
         </TouchableOpacity>
       </View>
-      <ScrollView style={styles.list}>
-        {state.issues.map(issue => (
-          <Issue issue={issue} />
-        ))}
-      </ScrollView>
+      {state.loading ? (
+        <Text style={styles.loadingText}>Carregando...</Text>
+      ) : (
+        <ScrollView style={styles.list}>
+          {/* {state.issues.map(issue => (
+            <Issue issue={issue} key={issue.id} />
+          ))} */}
+          <FlatList
+            data={state.issues}
+            renderItem={({ item }) => <Issue issue={item} key={item.id} />}
+            onRefresh={getIssues}
+            keyExtractor={(item, index) => String(item.id)}
+            refreshing={state.loading}
+          />
+        </ScrollView>
+      )}
     </View>
   )
 }
@@ -67,6 +108,7 @@ export default function IssuesScreen({
 IssuesScreen.navigationOptions = {
   header: null
 }
+
 
 function Issue({ issue }) {
   return (
@@ -79,8 +121,12 @@ function Issue({ issue }) {
           <Image source={{ uri: issue.user.avatar_url }} style={styles.image} />
         </View>
         <View style={styles.repoText}>
-          <Text style={styles.repoTitle}>{issue.title}</Text>
-          <Text style={styles.repoSubtitle}>{issue.user.login}</Text>
+          <Text style={styles.repoTitle} numberOfLines={1}>
+            {issue.title}
+          </Text>
+          <Text style={styles.repoSubtitle} numberOfLines={1}>
+            {issue.user.login}
+          </Text>
         </View>
         <View style={styles.itemIcon}>
           <Ionicons name='ios-arrow-forward' size={32} color='#CCC' />
@@ -99,6 +145,10 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingTop: 15
+  },
+  loadingText: {
+    paddingTop: 15,
+    textAlign: 'center'
   },
   topBar: {
     backgroundColor: '#CCC',
@@ -146,6 +196,7 @@ const styles = StyleSheet.create({
   },
   itemIcon: {
     paddingRight: 10,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginLeft: 10
   }
 })

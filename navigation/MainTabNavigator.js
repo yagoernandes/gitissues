@@ -1,8 +1,6 @@
 import React from 'react'
 import { Platform } from 'react-native'
-import {
-  createStackNavigator
-} from 'react-navigation'
+import { createStackNavigator } from 'react-navigation'
 
 import HomeScreen from '../screens/HomeScreen'
 import IssuesScreen from '../screens/IssuesScreen'
@@ -32,9 +30,11 @@ const IssuesStack = createStackNavigator(
   config
 )
 
-IssuesStack.navigationOptions = ({ navigation }) => ({
-  title: navigation.getParam('headerTitle'),
-})
+IssuesStack.navigationOptions = ({ navigation }) => {
+  return {
+    title: navigation.getParam('name', 'Issues'),
+  }
+}
 
 IssuesStack.path = ''
 

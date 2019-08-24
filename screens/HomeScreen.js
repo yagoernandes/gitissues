@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import {
+  Alert,
   Image,
   Platform,
   ScrollView,
@@ -8,7 +9,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-  TextInput
+  TextInput,
+  FlatList
 } from 'react-native'
 import axios from 'axios'
 import { AsyncStorage } from 'react-native'
@@ -25,6 +27,11 @@ export default function HomeScreen({ navigation }) {
     repos: []
   })
   const addProject = () => {
+    setState(s => ({ ...s, loading: true }))
+    if (!state.text.includes('/')) {
+      Alert.alert('Não contém barra')
+      return
+    }
     axios
       .get(`http://api.github.com/repos/${state.text}`)
       .then(async response => {
@@ -47,7 +54,7 @@ export default function HomeScreen({ navigation }) {
             await AsyncStorage.setItem('REPOS', JSON.stringify(tempRepoList))
             getAllRepos()
           } catch (error) {
-            console.log('Error saving data: ', error)
+            Alert.alert('Error saving data: ', error)
           }
           //
         }
@@ -65,7 +72,7 @@ export default function HomeScreen({ navigation }) {
         setState(s => ({ ...s, loading: false, repos: [], text: '' }))
       }
     } catch (error) {
-      console.log('Erro ao recuperar os repositórios')
+      Alert.alert('Erro ao recuperar os repositórios')
     }
   }
   return (
@@ -77,18 +84,38 @@ export default function HomeScreen({ navigation }) {
           value={state.text}
           onChangeText={text => setState(s => ({ ...s, text }))}
         />
-        <TouchableOpacity style={styles.repoAdd} onPress={addProject}>
+        <TouchableOpacity
+          style={styles.repoAdd}
+          onPress={addProject}
+          disabled={state.loading}>
           <Ionicons name='ios-add' size={40} color='black' />
         </TouchableOpacity>
       </View>
       <View style={styles.list}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.contentContainer}>
-          {state.repos.map(repo => (
-            <Item navigate={navigation.navigate} repo={repo} key={repo.id} />
-          ))}
-        </ScrollView>
+        {state.loading ? (
+          <Text style={styles.loadingText}>Carregando</Text>
+        ) : (
+          <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.contentContainer}>
+            {/* {state.repos.map(repo => (
+              <Item navigate={navigation.navigate} repo={repo} key={repo.id} />
+            ))} */}
+            <FlatList
+              data={state.repos}
+              renderItem={({ item }) => (
+                <Item
+                  navigate={navigation.navigate}
+                  repo={item}
+                  key={item.id}
+                />
+              )}
+              keyExtractor={(item, index) => String(item.id)}
+              onRefresh={getAllRepos}
+              refreshing={state.loading}
+            />
+          </ScrollView>
+        )}
       </View>
     </View>
   )
@@ -105,8 +132,12 @@ function Item({ navigate, repo }) {
           <Image source={{ uri: repo.avatar }} style={styles.image} />
         </View>
         <View style={styles.repoText}>
-          <Text style={styles.repoTitle}>{repo.name}</Text>
-          <Text style={styles.repoSubtitle}>{repo.login}</Text>
+          <Text style={styles.repoTitle} numberOfLines={1}>
+            {repo.name}
+          </Text>
+          <Text style={styles.repoSubtitle} numberOfLines={1}>
+            {repo.login}
+          </Text>
         </View>
         <View style={styles.itemIcon}>
           <Ionicons name='ios-arrow-forward' size={32} color='#CCC' />
@@ -158,6 +189,10 @@ const styles = StyleSheet.create({
   list: {
     flex: 1
   },
+  loadingText: {
+    paddingTop: 15,
+    textAlign: 'center'
+  },
   item: {
     display: 'flex',
     flexDirection: 'row',
@@ -192,7 +227,8 @@ const styles = StyleSheet.create({
   },
   itemIcon: {
     paddingRight: 10,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginLeft: 10
   },
 
   developmentModeText: {
