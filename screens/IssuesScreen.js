@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   ScrollView,
   StyleSheet,
@@ -8,24 +8,57 @@ import {
   Image
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import axios from 'axios'
+import * as WebBrowser from 'expo-web-browser'
 
-export default function IssuesScreen({ navigation }) {
-  console.log('Titulo: ', navigation.state.params.name)
+
+export default function IssuesScreen({
+  navigation: {
+    state: {
+      params: { avatar, id, login, name }
+    }
+  }
+}) {
+  const [state, setState] = useState({
+    filter: 'all',
+    issues: []
+  })
+
+  useEffect(() => {
+    axios
+      .get(
+        `http://api.github.com/repos/${name}/${login}/issues?state=${state.filter}`
+      )
+      .then(response => {
+        if (response.data && response.data.id) {
+          console.log('Resposta: ', response.data)
+          // console.log('ID: ', response.data.id)
+          // console.log('Título: ', response.data.title)
+          // console.log('Usuário: ', response.data.user.login)
+          // console.log('Avatar: ', response.data.user.avatar_url)
+
+          setState(s => ({ ...s, issues: response.data }))
+        }
+      })
+  }, [state.filter])
+
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>{setState(s=>({...s, filter:'all'}))}}>
           <Text style={styles.topBarTextSelected}>Todas</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>{setState(s=>({...s, filter:'open'}))}}>
           <Text style={styles.topBarText}>Abertas</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>{setState(s=>({...s, filter:'closed'}))}}>
           <Text style={styles.topBarText}>Fechadas</Text>
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.list}>
-        <Issue navigate={navigation.navigate} />
+        {state.issues.map(issue => (
+          <Issue issue={issue} />
+        ))}
       </ScrollView>
     </View>
   )
@@ -35,30 +68,19 @@ IssuesScreen.navigationOptions = {
   header: null
 }
 
-function Issue({ navigate }) {
+function Issue({ issue }) {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigate('Issues', {
-          name: 'teste',
-          itemId: 86,
-          otherParam: 'anything you want here'
-        })
+        WebBrowser.openBrowserAsync(issue.url)
       }}>
       <View style={styles.item}>
         <View style={styles.avatar}>
-          <Image
-            source={
-              __DEV__
-                ? require('../assets/images/robot-dev.png')
-                : require('../assets/images/robot-prod.png')
-            }
-            style={styles.image}
-          />
+          <Image source={{ uri: issue.user.avatar_url }} style={styles.image} />
         </View>
         <View style={styles.repoText}>
-          <Text style={styles.repoTitle}>rocketnative</Text>
-          <Text style={styles.repoSubtitle}>RocketSeat</Text>
+          <Text style={styles.repoTitle}>{issue.title}</Text>
+          <Text style={styles.repoSubtitle}>{issue.user.login}</Text>
         </View>
         <View style={styles.itemIcon}>
           <Ionicons name='ios-arrow-forward' size={32} color='#CCC' />
@@ -103,10 +125,11 @@ const styles = StyleSheet.create({
     marginBottom: 15
   },
   image: {
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
     resizeMode: 'contain',
-    borderRadius: 100
+    borderRadius: 100,
+    marginRight: 15
   },
   repoText: {
     flex: 1,
@@ -124,5 +147,5 @@ const styles = StyleSheet.create({
   itemIcon: {
     paddingRight: 10,
     justifyContent: 'center'
-  },
+  }
 })
