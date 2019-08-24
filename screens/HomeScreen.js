@@ -1,5 +1,6 @@
-import * as WebBrowser from 'expo-web-browser';
-import React from 'react';
+import React from 'react'
+import * as WebBrowser from 'expo-web-browser'
+import { Ionicons } from '@expo/vector-icons'
 import {
   Image,
   Platform,
@@ -8,153 +9,178 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
+  TextInput,
+  Alert
+} from 'react-native'
 
-import { MonoText } from '../components/StyledText';
+import { MonoText } from '../components/StyledText'
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}>
-        <View style={styles.welcomeContainer}>
+      <View style={styles.top}>
+        <TextInput
+          placeholder={'Adicionar novo repositório'}
+          style={styles.addRepoText}
+        />
+        <TouchableOpacity style={styles.repoAdd}>
+          <Ionicons name='ios-add' size={40} color='black' />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.list}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}>
+          <Item navigate={navigation.navigate} />
+        </ScrollView>
+      </View>
+    </View>
+  )
+}
+
+function Item({navigate}) {
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        navigate('Issues', {
+          name:'teste',
+          itemId: 86,
+          otherParam: 'anything you want here'
+        })
+      }}>
+      <View style={styles.item}>
+        <View style={styles.avatar}>
           <Image
             source={
               __DEV__
                 ? require('../assets/images/robot-dev.png')
                 : require('../assets/images/robot-prod.png')
             }
-            style={styles.welcomeImage}
+            style={styles.image}
           />
         </View>
-
-        <View style={styles.getStartedContainer}>
-          <DevelopmentModeNotice />
-
-          <Text style={styles.getStartedText}>Get started by opening</Text>
-
-          <View
-            style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-            <MonoText>screens/HomeScreen.js</MonoText>
-          </View>
-
-          <Text style={styles.getStartedText}>
-            Change this text and your app will automatically reload.
-          </Text>
+        <View style={styles.repoText}>
+          <Text style={styles.repoTitle}>rocketnative</Text>
+          <Text style={styles.repoSubtitle}>RocketSeat</Text>
         </View>
-
-        <View style={styles.helpContainer}>
-          <TouchableOpacity onPress={handleHelpPress} style={styles.helpLink}>
-            <Text style={styles.helpLinkText}>
-              Help, it didn’t automatically reload!
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-
-      <View style={styles.tabBarInfoContainer}>
-        <Text style={styles.tabBarInfoText}>
-          This is a tab bar. You can edit it in:
-        </Text>
-
-        <View
-          style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-          <MonoText style={styles.codeHighlightText}>
-            navigation/MainTabNavigator.js
-          </MonoText>
+        <View style={styles.itemIcon}>
+          <Ionicons name='ios-arrow-forward' size={32} color='#CCC' />
         </View>
       </View>
-    </View>
-  );
+    </TouchableOpacity>
+  )
 }
 
 HomeScreen.navigationOptions = {
-  header: null,
-};
-
-function DevelopmentModeNotice() {
-  if (__DEV__) {
-    const learnMoreButton = (
-      <Text onPress={handleLearnMorePress} style={styles.helpLinkText}>
-        Learn more
-      </Text>
-    );
-
-    return (
-      <Text style={styles.developmentModeText}>
-        Development mode is enabled: your app will be slower but you can use
-        useful development tools. {learnMoreButton}
-      </Text>
-    );
-  } else {
-    return (
-      <Text style={styles.developmentModeText}>
-        You are not in development mode: your app will run at full speed.
-      </Text>
-    );
-  }
+  header: null
 }
 
-function handleLearnMorePress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/development-mode/'
-  );
-}
+// function handleLearnMorePress() {
+//   WebBrowser.openBrowserAsync(
+//     'https://docs.expo.io/versions/latest/workflow/development-mode/'
+//   );
+// }
 
-function handleHelpPress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
-  );
-}
+// function handleHelpPress() {
+//   WebBrowser.openBrowserAsync(
+//     'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
+//   );
+// }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#EEE'
   },
+  top: {
+    paddingVertical: 15,
+    marginHorizontal: 20,
+    display: 'flex',
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#CCC'
+  },
+  addRepoText: {
+    backgroundColor: '#FFF',
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    flex: 1
+  },
+  repoAdd: {
+    marginLeft: 15
+  },
+  list: {
+    flex: 1
+  },
+  item: {
+    display: 'flex',
+    flexDirection: 'row',
+    backgroundColor: '#FFF',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 15
+  },
+  image: {
+    width: 80,
+    height: 80,
+    resizeMode: 'contain',
+    borderRadius: 100,
+  },
+  contentContainer: {
+    paddingTop: 15,
+    marginHorizontal: 20
+  },
+  repoText: {
+    flex: 1,
+    justifyContent: 'center'
+  },
+  repoTitle: {
+    fontWeight: '700',
+    fontSize: 18,
+    marginBottom: 3
+  },
+  repoSubtitle: {
+    color: '#CCC',
+    fontSize: 14
+  },
+  itemIcon: {
+    paddingRight: 10,
+    justifyContent: 'center'
+  },
+
   developmentModeText: {
     marginBottom: 20,
     color: 'rgba(0,0,0,0.4)',
     fontSize: 14,
     lineHeight: 19,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 30,
+    textAlign: 'center'
   },
   welcomeContainer: {
     alignItems: 'center',
     marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
+    marginBottom: 20
   },
   getStartedContainer: {
     alignItems: 'center',
-    marginHorizontal: 50,
+    marginHorizontal: 50
   },
   homeScreenFilename: {
-    marginVertical: 7,
+    marginVertical: 7
   },
   codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
+    color: 'rgba(96,100,109, 0.8)'
   },
   codeHighlightContainer: {
     backgroundColor: 'rgba(0,0,0,0.05)',
     borderRadius: 3,
-    paddingHorizontal: 4,
+    paddingHorizontal: 4
   },
   getStartedText: {
     fontSize: 17,
     color: 'rgba(96,100,109, 1)',
     lineHeight: 24,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   tabBarInfoContainer: {
     position: 'absolute',
@@ -166,33 +192,33 @@ const styles = StyleSheet.create({
         shadowColor: 'black',
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 3,
+        shadowRadius: 3
       },
       android: {
-        elevation: 20,
-      },
+        elevation: 20
+      }
     }),
     alignItems: 'center',
     backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
+    paddingVertical: 20
   },
   tabBarInfoText: {
     fontSize: 17,
     color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
+    textAlign: 'center'
   },
   navigationFilename: {
-    marginTop: 5,
+    marginTop: 5
   },
   helpContainer: {
     marginTop: 15,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   helpLink: {
-    paddingVertical: 15,
+    paddingVertical: 15
   },
   helpLinkText: {
     fontSize: 14,
-    color: '#2e78b7',
-  },
-});
+    color: '#2e78b7'
+  }
+})
