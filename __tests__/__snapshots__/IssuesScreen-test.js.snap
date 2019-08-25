@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`IssuesScreen renders the issues screen 1`] = `
+<View
+  style={
+    Object {
+      "backgroundColor": "#EEE",
+      "flex": 1,
+      "paddingHorizontal": 20,
+      "paddingVertical": 15,
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "backgroundColor": "#CCC",
+        "borderRadius": 5,
+        "display": "flex",
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingHorizontal": 20,
+        "paddingVertical": 10,
+      }
+    }
+  >
+    <View
+      accessible={true}
+      isTVSelectable={true}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "opacity": 1,
+        }
+      }
+    >
+      <Text
+        style={
+          Object {
+            "color": "#666",
+            "fontWeight": "700",
+          }
+        }
+      >
+        Todas
+      </Text>
+    </View>
+    <View
+      accessible={true}
+      isTVSelectable={true}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "opacity": 1,
+        }
+      }
+    >
+      <Text
+        style={
+          Object {
+            "color": "#AAA",
+          }
+        }
+      >
+        Abertas
+      </Text>
+    </View>
+    <View
+      accessible={true}
+      isTVSelectable={true}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "opacity": 1,
+        }
+      }
+    >
+      <Text
+        style={
+          Object {
+            "color": "#AAA",
+          }
+        }
+      >
+        Fechadas
+      </Text>
+    </View>
+  </View>
+  <Text
+    style={
+      Object {
+        "paddingTop": 15,
+        "textAlign": "center",
+      }
+    }
+  >
+    Carregando...
+  </Text>
+</View>
+`;

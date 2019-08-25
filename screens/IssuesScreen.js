@@ -11,11 +11,13 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 import axios from 'axios'
 import * as WebBrowser from 'expo-web-browser'
+import api from '../store/api'
+import storage from '../store/asyncStorage'
 
 export default function IssuesScreen({
   navigation: {
     state: {
-      params: { avatar, id, login, name }
+      params: { login, name }
     },
     setParams
   }
@@ -36,10 +38,8 @@ export default function IssuesScreen({
 
   const getIssues = async () => {
     setState(s => ({ ...s, loading: true }))
-    const response = await axios.get(
-      `https://api.github.com/repos/${login}/${name}/issues?state=${state.filter}`
-    )
-    setState(s => ({ ...s, loading: false, issues: response.data }))
+    const issues = await api.getIssues(login, name, state.filter)
+    setState(s => ({ ...s, loading: false, issues }))
   }
 
   return (
@@ -94,7 +94,10 @@ export default function IssuesScreen({
           ))} */}
           <FlatList
             data={state.issues}
-            renderItem={({ item }) => <Issue issue={item} key={item.id} />}
+            renderItem={({ item }) => {
+              console.log(item)
+              return <Issue issue={item} key={item.id} />
+            }}
             onRefresh={getIssues}
             keyExtractor={(item, index) => String(item.id)}
             refreshing={state.loading}
@@ -109,12 +112,11 @@ IssuesScreen.navigationOptions = {
   header: null
 }
 
-
 function Issue({ issue }) {
   return (
     <TouchableOpacity
       onPress={() => {
-        WebBrowser.openBrowserAsync(issue.url)
+        WebBrowser.openBrowserAsync(issue.html_url)
       }}>
       <View style={styles.item}>
         <View style={styles.avatar}>

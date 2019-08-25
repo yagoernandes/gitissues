@@ -12,69 +12,41 @@ import {
   TextInput,
   FlatList
 } from 'react-native'
-import axios from 'axios'
-import { AsyncStorage } from 'react-native'
+import api from '../store/api'
+import storage from '../store/asyncStorage'
 
-// import { MonoText } from '../components/StyledText'
 
 export default function HomeScreen({ navigation }) {
   useEffect(() => {
     getAllRepos()
   }, [])
+
   const [state, setState] = useState({
     text: '',
     loading: true,
     repos: []
   })
-  const addProject = () => {
+
+  const addProject = async () => {
     setState(s => ({ ...s, loading: true }))
-    if (!state.text.includes('/')) {
-      Alert.alert('Não contém barra')
-      return
-    }
-    axios
-      .get(`http://api.github.com/repos/${state.text}`)
-      .then(async response => {
-        if (response.data && response.data.id) {
-          // console.log('Resposta: ', response.data)
-          console.log('ID: ', response.data.id)
-          console.log('Nome: ', response.data.name)
-          console.log('Organização: ', response.data.owner.login)
-          console.log('Avatar: ', response.data.owner.avatar_url)
-          //Adicionar novo repositorio
-          const tempRepoList = state.repos
-          tempRepoList.push({
-            id: response.data.id,
-            name: response.data.name,
-            login: response.data.owner.login,
-            avatar: response.data.owner.avatar_url
-          })
-          //Salvar lista de repositórios
-          try {
-            await AsyncStorage.setItem('REPOS', JSON.stringify(tempRepoList))
-            getAllRepos()
-          } catch (error) {
-            Alert.alert('Error saving data: ', error)
-          }
-          //
-        }
-      })
+    const response = await api.addProject(state.text)
+    getAllRepos()
   }
+
   const getAllRepos = async () => {
-    // ! Colocar em função separada
     try {
-      const repos = JSON.parse(await AsyncStorage.getItem('REPOS'))
-      if (repos !== null) {
+      const repos = await storage.get('REPOS')
+      if (repos) {
         setState(s => ({ ...s, loading: false, repos, text: '' }))
-        console.log(repos)
       } else {
         console.log('Não há repositórios salvos')
         setState(s => ({ ...s, loading: false, repos: [], text: '' }))
       }
     } catch (error) {
-      Alert.alert('Erro ao recuperar os repositórios')
+      console.log('Erro ao recuperar os repositórios')
     }
   }
+
   return (
     <View style={styles.container}>
       <View style={styles.top}>
@@ -150,18 +122,6 @@ function Item({ navigate, repo }) {
 HomeScreen.navigationOptions = {
   header: null
 }
-
-// function handleLearnMorePress() {
-//   WebBrowser.openBrowserAsync(
-//     'https://docs.expo.io/versions/latest/workflow/development-mode/'
-//   );
-// }
-
-// function handleHelpPress() {
-//   WebBrowser.openBrowserAsync(
-//     'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
-//   );
-// }
 
 const styles = StyleSheet.create({
   container: {

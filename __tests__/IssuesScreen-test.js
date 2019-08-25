@@ -2,10 +2,7 @@ import React from 'react'
 import NavigationTestUtils from 'react-navigation/NavigationTestUtils'
 import renderer from 'react-test-renderer'
 // import { render, fireEvent } from 'react-testing-library'
-import HomeScreen from '../screens/HomeScreen'
 import IssuesScreen from '../screens/IssuesScreen'
-
-import App from '../App'
 
 jest.mock('expo', () => ({
   AppLoading: 'AppLoading'
@@ -13,20 +10,18 @@ jest.mock('expo', () => ({
 
 jest.mock('../navigation/AppNavigator', () => 'AppNavigator')
 
-describe('App', () => {
+describe('IssuesScreen', () => {
   jest.useFakeTimers()
 
-  beforeEach(() => {
-    NavigationTestUtils.resetInternalState()
-  })
-
-  it(`renders the loading screen`, () => {
-    const tree = renderer.create(<App />).toJSON()
-    expect(tree).toMatchSnapshot()
-  })
-
-  it(`renders the root without loading screen`, () => {
-    const tree = renderer.create(<App skipLoadingScreen />).toJSON()
+  it(`renders the issues screen`, () => {
+    const fakeState = {
+      state: {
+        params: { id: 123123123, name: 'Test', login: 'testtt', avatar: 'url' }
+      }
+    }
+    const tree = renderer
+      .create(<IssuesScreen navigation={fakeState} />)
+      .toJSON()
     expect(tree).toMatchSnapshot()
   })
 })
