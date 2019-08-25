@@ -94,10 +94,7 @@ export default function IssuesScreen({
           ))} */}
           <FlatList
             data={state.issues}
-            renderItem={({ item }) => {
-              console.log(item)
-              return <Issue issue={item} key={item.id} />
-            }}
+            renderItem={({ item }) => <Issue issue={item} key={item.id} />}
             onRefresh={getIssues}
             keyExtractor={(item, index) => String(item.id)}
             refreshing={state.loading}

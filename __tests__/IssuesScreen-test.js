@@ -4,12 +4,6 @@ import renderer from 'react-test-renderer'
 // import { render, fireEvent } from 'react-testing-library'
 import IssuesScreen from '../screens/IssuesScreen'
 
-jest.mock('expo', () => ({
-  AppLoading: 'AppLoading'
-}))
-
-jest.mock('../navigation/AppNavigator', () => 'AppNavigator')
-
 describe('IssuesScreen', () => {
   jest.useFakeTimers()
 

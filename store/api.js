@@ -27,7 +27,7 @@ const getIssues = async (login, name, filter) => {
   const response = await axios.get(
     `https://api.github.com/repos/${login}/${name}/issues?state=${filter}`
   )
-  console.log(response.data)
+  // console.log(response.data)
   return response.data
 }
 
