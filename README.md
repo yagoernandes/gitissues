@@ -11,6 +11,8 @@ https://github.com/fabriciopedreira/desafio-react-native
 No terminal, digite:
 
 ```sh
+npm install
+
 expo start
 ```
 
