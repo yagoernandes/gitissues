@@ -43,14 +43,18 @@ Adicione um repositório digitando:
 {organização}/{repositório}
 ```
 
-## Observações
+## :postbox: FAQ
 
-Dependências utilizadas:
+**Quais as dependências utilizadas?**
 
 - expo: Abstração do react-native
-- axios: Requisições a api do Github
+- axios: Requisições à api do Github
 - react-navigation: Roteamento de páginas
 
-Ferramentas utilizadas:
+**Quais as ferramentas utilizadas?**
 
 - Editor Vscode com a extensão Prettier para formatar o código seguindo a style guide padrão
+
+**Como foi feito o layout?**
+
+- A diagramação foi feita utilizando exclusivamente flexbox, sem nenhuma biblioteca visual pronta.
