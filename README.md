@@ -23,7 +23,7 @@
     <img src=".github/issues.png" height="600" width="auto"/>
 </p>
 
-##  Utilização
+##  :construction_worker: Utilização
 
 Para instalar as depencências:
 
