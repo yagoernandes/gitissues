@@ -18,8 +18,10 @@
 
 > Aplicativo desenvolvido em react-native para acompanhar as issues de repositórios github
 
-<p align="center"><img src=".github/home.png" height="600" width="auto"/></p>
-<p align="center"><img src=".github/issues.png" height="600" width="auto"/></p>
+<p align="center">
+    <img src=".github/home.png" height="600" width="auto"/>
+    <img src=".github/issues.png" height="600" width="auto"/>
+</p>
 
 ##  Utilização
 
