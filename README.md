@@ -58,3 +58,10 @@ Adicione um repositório digitando:
 **Como foi feito o layout?**
 
 - A diagramação foi feita utilizando exclusivamente flexbox, sem nenhuma biblioteca visual pronta.
+
+
+---
+
+<p align="center">
+Made with :heart: by <a href="https://www.linkedin.com/in/yagoernandes">YagoErnandes</a>
+</p>
